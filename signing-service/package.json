@@ -1,0 +1,11 @@
+{
+  "name": "signing-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": { "dev": "node --watch index.js", "start": "node index.js" },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "pg": "^8.13.0"
+  }
+}

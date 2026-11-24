@@ -1,0 +1,535 @@
+{
+  "info": {
+    "name": "SIGMA - Microservice",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "documentId",
+      "value": ""
+    },
+    {
+      "key": "signatureId",
+      "value": ""
+    },
+    {
+      "key": "verifyToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "item": [
+        {
+          "name": "Health gateway",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        },
+        {
+          "name": "Register (signature opsional)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/register",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "full_name",
+                  "value": "Andi Aljabar",
+                  "type": "text"
+                },
+                {
+                  "key": "title",
+                  "value": "S.Kom., M.T.I.",
+                  "type": "text"
+                },
+                {
+                  "key": "position",
+                  "value": "Kaprodi",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "andi@kampus.ac.id",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "rahasia123",
+                  "type": "text"
+                },
+                {
+                  "key": "signature",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.token) pm.collectionVariables.set('token', j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"andi@kampus.ac.id\",\n  \"password\": \"rahasia123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.token) pm.collectionVariables.set('token', j.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Profil saya",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ubah profil",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/auth/me",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"position\": \"Ketua Program Studi\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Upload / ganti tanda tangan",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/me/signature",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "signature",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Lihat gambar tanda tangan saya",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me/signature",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Dokumen",
+      "item": [
+        {
+          "name": "Upload dokumen (PDF/Word/gambar)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/documents",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "name",
+                  "value": "KELAS PELATIHAN HARDWARE RAKIT PC",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "Persetujuan KProdi",
+                  "type": "text"
+                },
+                {
+                  "key": "field_of_study",
+                  "value": "Teknik Informatika",
+                  "type": "text"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('documentId', j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Daftar dokumen saya",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/documents",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail dokumen",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/documents/{{documentId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Ubah metadata dokumen",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/documents/{{documentId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"KELAS PELATIHAN HARDWARE RAKIT PC\",\n  \"type\": \"Persetujuan KProdi\",\n  \"additional_info\": \"Lab Jaringan\",\n  \"field_of_study\": \"Teknik Informatika\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Pratinjau halaman 1 (PNG)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/documents/{{documentId}}/preview/1",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Tanda tangan",
+      "item": [
+        {
+          "name": "Tanda tangani dokumen",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/signatures",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"document_id\": \"{{documentId}}\",\n  \"label\": \"Mengetahui, Kaprodi\",\n  \"page\": 1,\n  \"x\": 0.9,\n  \"y\": 0.85\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) { pm.collectionVariables.set('signatureId', j.id); pm.collectionVariables.set('verifyToken', j.token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Daftar tanda tangan saya",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/signatures",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unduh PDF",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/signatures/{{signatureId}}/download?format=pdf",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unduh Gambar (PNG / ZIP)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/signatures/{{signatureId}}/download?format=png",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unduh Word",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/signatures/{{signatureId}}/download?format=docx",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Unduh ZIP semua format",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/signatures/{{signatureId}}/download?format=zip",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cabut tanda tangan",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/signatures/{{signatureId}}/revoke",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Salah penulisan nama\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Verifikasi publik (tanpa login)",
+      "item": [
+        {
+          "name": "Data verifikasi",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/verify/{{verifyToken}}"
+          }
+        },
+        {
+          "name": "Cek keaslian file",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/verify/{{verifyToken}}/check-file",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
